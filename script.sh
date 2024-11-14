@@ -18,32 +18,40 @@ while true; do
 
     case $opcion in
         "1")
-            echo "Has elegido la Opción 1"
-            # Añadir aquí el código para la Opción 1
+            toilet -S "Hola!! :)" -f pagga -w 75
             ;;
         "2")
             echo "Has elegido la Opción 2"
-            # Añadir aquí el código para la Opción 2
+            # Añadir aquí el código para la Opción 3
             ;;
         "3")
-            echo "Has elegido la Opción 3"
-            # Añadir aquí el código para la Opción 3
+            echo "Introduce el hash:"
+            read hash
+
+            # Obtener la salida de hashid
+            hashid=$(echo "$hash" | hashid)
+            hash_jtr=$(echo "$hash" | hashid -j )
+
+            # Procesar la salida y formatearla en una tabla
+            echo -e "Tipo de Hash\tVersión de JtR"
+            echo "$hashid" | grep "[+]" | awk -F '[+] ' '{print $1}'
+            sleep 3
             ;;
         "4")
             echo "Has elegido la Opción 4"
-            # Añadir aquí el código para la Opción 4
+
             ;;
         "5")
             echo "Has elegido la Opción 5"
-            # Añadir aquí el código para la Opción 5
+
             ;;
         "6")
             echo "Has elegido la Opción 6"
-            # Añadir aquí el código para la Opción 5
+
             ;;
         "7")
             echo "Has elegido la Opción 7"
-            # Añadir aquí el código para la Opción 5
+
             ;;
         "8")
             printf "%-25s | %-30s\n" "Opción " "Descripción"
