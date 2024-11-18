@@ -17,13 +17,16 @@ while true; do
     read opcion
 
     case $opcion in
+# -----------------------SALUDO-----------------------------------
         "1")
             toilet -S "Hola!! :)" -f pagga -w 75
             ;;
+# -----------------------LOGS-----------------------------------
         "2")
             echo "Has elegido la Opción 2"
             # Añadir aquí el código para la Opción 3
             ;;
+# -----------------------DICCIONARIO-----------------------------------
         "3")
             echo "Introduce el hash:"
             read hash
@@ -37,7 +40,8 @@ while true; do
             echo "$hashid" | grep "[+]" | awk -F '[+] ' '{print $1}'
             read -s -p "Presiona cualquier tecla para volver al menu."
             ;;
-        "4")
+# -----------------------FINGERPRINTING-----------------------------------
+        "4") 
             clear
             echo "Comenzando fingerprinting..."
             read -p "Introduce la red: " red
@@ -64,23 +68,27 @@ while true; do
 
             echo "Iniciando Nmap contra $target..."
             
-            nmap -sV $target >> $target.txt
+            nmap -sV $target > $target.txt
 
             echo "Nmap terminado, puedes encontrar lo resultados en $target.txt"
             read -s -p "Presiona cualquier tecla para volver al menu."
             ;;
+# -----------------------FOOTPRINTING-----------------------------------
         "5")
             echo "Has elegido la Opción 5"
 
             ;;
+# -----------------------FUZZING-----------------------------------
         "6")
             echo "Has elegido la Opción 6"
 
             ;;
+# -----------------------METASPLOIT-----------------------------------
         "7")
             echo "Has elegido la Opción 7"
 
             ;;
+# -----------------------HELP-----------------------------------
         "8")
             printf "%-25s | %-30s\n" "Opción " "Descripción"
             echo "----------------------------------------------"
@@ -99,7 +107,7 @@ while true; do
             printf "%-25s | %-30s\n" "Ataque con metasploit" "Descripción"
             echo "----------------------------------------------"
             ;;
-
+# -----------------------SALIR-----------------------------------
         "9")
             echo "Salir..."
             break
