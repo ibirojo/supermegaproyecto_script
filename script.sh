@@ -35,11 +35,39 @@ while true; do
             # Procesar la salida y formatearla en una tabla
             echo -e "Tipo de Hash\tVersión de JtR"
             echo "$hashid" | grep "[+]" | awk -F '[+] ' '{print $1}'
-            sleep 3
+            read -s -p "Presiona cualquier tecla para volver al menu."
             ;;
         "4")
-            echo "Has elegido la Opción 4"
+            clear
+            echo "Comenzando fingerprinting..."
+            read -p "Introduce la red: " red
 
+            ips=()
+
+
+            while read -r ip; do
+                ips+=("$ip")
+            done < <(fping -a -4 -g $red 2>/dev/null)
+
+
+            for i in "${!ips[@]}"; do
+                eval "IP_$((i+1))=${ips[i]}"
+            done
+
+            for i in "${!ips[@]}"; do
+                eval "echo IP_$((i+1))=\$IP_$((i+1))"
+            done
+
+            read -p "Qué ip quieres escanear? (escribe el número)" target_id
+
+            eval "target=\$IP_$target_id"
+
+            echo "Iniciando Nmap contra $target..."
+            
+            nmap -sV $target >> $target.txt
+
+            echo "Nmap terminado, puedes encontrar lo resultados en $target.txt"
+            read -s -p "Presiona cualquier tecla para volver al menu."
             ;;
         "5")
             echo "Has elegido la Opción 5"
