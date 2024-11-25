@@ -17,16 +17,51 @@ while true; do
     read opcion
 
     case $opcion in
-# -----------------------SALUDO-----------------------------------
+# -----------------------SALUDO----------------------------------- X
         "1")
             toilet -S "Hola!! :)" -f pagga -w 75
             ;;
-# -----------------------LOGS-----------------------------------
+# -----------------------LOGS-----------------------------------  X
         "2")
-            echo "Has elegido la Opción 2"
-            # Añadir aquí el código para la Opción 3
+            echo "Comenzando análisis de logs..."
+            read -p "Indica el lugar el fichero de logs (direccion completa):" log
+            echo "Analizando logs..."
+            
+            resultado_log=informe_logs.txt
+
+            echo "Análisis de logs de Nginx: $(date)" > $resultado_log
+            echo "=================================" >> $resultado_log
+
+            # Direcciones IP con solicitudes en horas poco habituales (por ejemplo, de 00:00 a 06:00)
+            echo "Direcciones IP con solicitudes en horas poco habituales (00:00 - 06:00):" >> $resultado_log
+            awk 'substr($4, 14, 8) ~ /0[0-6]:[0-5][0-9]:[0-5][0-9]/ {print $1, substr($4, 14, 8), $7}' $log | sort | uniq -c | sort -nr >> $resultado_log
+
+            echo >> $resultado_log
+
+            # Direcciones IP con intentos de acceso repetido a recursos inexistentes (código 404)
+            echo "Direcciones IP con intentos de acceso repetido a recursos inexistentes (404):" >> $resultado_log
+            awk '$9 == 404 {print $1, substr($4, 14, 8), $7}' $log | sort | uniq -c | sort -nr >> $resultado_log
+
+            echo >> $resultado_log
+
+            # Direcciones IP con número elevado de solicitudes en un corto periodo
+            echo "Direcciones IP con número elevado de solicitudes en un corto periodo:" >> $resultado_log
+            awk '{print $1}' $log | sort | uniq -c | sort -nr | awk '$1 > 10' >> $resultado_log
+
+            echo >> $resultado_log
+
+            # Direcciones IP con intentos de acceso a directorios restringidos o sensibles
+            echo "Direcciones IP con intentos de acceso a directorios restringidos o sensibles:" >> $resultado_log
+            awk '$7 ~ /\/etc\/passwd|\/var\/|\/proc\/|\/password\/|\/secure\/|\/contraseñas\/|\/users\/|\/private/ {print $1, substr($4, 14, 8), $7}' $log | sort | uniq -c | sort -nr >> $resultado_log
+
+            echo >> $resultado_log
+
+            echo "Análisis completado. Informe guardado en $resultado_log"
+
+            read -s -p "Presiona cualquier tecla para volver al menu."
+            clear
             ;;
-# -----------------------DICCIONARIO-----------------------------------
+# -----------------------DICCIONARIO----------------------------------- X
         "3")
             echo "Introduce el hash:"
             read hash
@@ -38,16 +73,19 @@ while true; do
             # Procesar la salida y formatearla en una tabla
             echo -e "Tipo de Hash\tVersión de JtR"
             echo "$hashid" | grep "[+]" | awk -F '[+] ' '{print $1}'
+
+
             read -s -p "Presiona cualquier tecla para volver al menu."
+            clear
             ;;
-# -----------------------FINGERPRINTING-----------------------------------
+# -----------------------FINGERPRINTING----------------------------------- X
         "4") 
             clear
             echo "Comenzando fingerprinting..."
+            sleep 1
             read -p "Introduce la red: " red
 
             ips=()
-
 
             while read -r ip; do
                 ips+=("$ip")
@@ -68,27 +106,28 @@ while true; do
 
             echo "Iniciando Nmap contra $target..."
             
-            nmap -sV $target > $target.txt
+            nmap -sV $target > $target.txt # ADD AWK/GREP --------------------- 
 
             echo "Nmap terminado, puedes encontrar lo resultados en $target.txt"
             read -s -p "Presiona cualquier tecla para volver al menu."
+            clear
             ;;
-# -----------------------FOOTPRINTING-----------------------------------
+# -----------------------FOOTPRINTING----------------------------------- X
         "5")
             echo "Has elegido la Opción 5"
 
             ;;
-# -----------------------FUZZING-----------------------------------
+# -----------------------FUZZING----------------------------------- X
         "6")
             echo "Has elegido la Opción 6"
 
             ;;
-# -----------------------METASPLOIT-----------------------------------
+# -----------------------METASPLOIT----------------------------------- X
         "7")
             echo "Has elegido la Opción 7"
 
             ;;
-# -----------------------HELP-----------------------------------
+# -----------------------HELP----------------------------------- X
         "8")
             printf "%-25s | %-30s\n" "Opción " "Descripción"
             echo "----------------------------------------------"
