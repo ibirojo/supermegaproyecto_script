@@ -78,7 +78,7 @@ while true; do
             read -s -p "Presiona cualquier tecla para volver al menu."
             clear
             ;;
-# -----------------------FINGERPRINTING----------------------------------- X
+# -----------------------FINGERPRINTING----------------------------------- 
         "4") 
             clear
             echo "Comenzando fingerprinting..."
@@ -100,16 +100,19 @@ while true; do
                 eval "echo IP_$((i+1))=\$IP_$((i+1))"
             done
 
-            read -p "Qué ip quieres escanear? (escribe el número)" target_id
+            read -p "Qué ip quieres escanear? (escribe el número): " target_id
 
             eval "target=\$IP_$target_id"
 
             echo "Iniciando Nmap contra $target..."
             
-            nmap -sV $target > $target.txt # ADD AWK/GREP --------------------- 
+            nmap $target | grep -A 20 "PORT" | grep -B 20 "Service info:" >> $target.txt 
 
             echo "Nmap terminado, puedes encontrar lo resultados en $target.txt"
             read -s -p "Presiona cualquier tecla para volver al menu."
+
+            #EXTRA----> QUE SE PUEDAN LANZAR SCRIPTS !!!!!!
+            
             clear
             ;;
 # -----------------------FOOTPRINTING----------------------------------- X
