@@ -1,12 +1,18 @@
 #!/bin/bash
+
 if [ "$EUID" -ne 0 ]
   then echo "Por favor, ejecuta este script como root."
   exit
 fi
 
+R='\033[0;31m'   #'0;31' is Red's ANSI color code
+G='\033[0;32m'   #'0;32' is Green's ANSI color code
+Y='\033[1;32m'   #'1;32' is Yellow's ANSI color code
+B='\033[0;34m'   #'0;34' is Blue's ANSI color code
+NOCOLOR='\033[0m'
 while true; do
     toilet -S supermegaincreible  script molon de ibai -f pagga -w 75
-    echo "==========================================================================" 
+    echo -e "\033[0;34m==========================================================================" 
     echo "------ Menú ------"
     echo "1. Saludar"
     echo "2. Ánalisis de Logs"
@@ -15,16 +21,20 @@ while true; do
     echo "5. Footprinting"
     echo "6. Fuzzing"
     echo "7. Ataque con metasploit"
-    echo "8. Ayuda"
+    echo "8. Instalar dependecias"
     echo "9. Salir"
     echo "------------------"
+    echo -e "\033[0;31mAtencion, si no estas trabajando linux instala las dependecias o el script fallará (8)\033[0m"
     echo "Elige una opción:"
     read opcion
 
     case $opcion in
 # -----------------------SALUDO----------------------------------- X
         "1")
+            clear
             toilet -S "Hola!! :)" -f pagga -w 75
+            sleep 3
+            clear
             ;;
 # -----------------------LOGS-----------------------------------  X
         "2")
@@ -186,24 +196,13 @@ while true; do
             echo "Has elegido la Opción 7"
 
             ;;
-# -----------------------HELP----------------------------------- X
+# -----------------------INSTALL DEPENDENCIES----------------------------------- X
         "8")
-            printf "%-25s | %-30s\n" "Opción " "Descripción"
-            echo "----------------------------------------------"
-            printf "%-25s | %-30s\n" "Saludar" "Descripción"
-            echo "----------------------------------------------"
-            printf "%-25s | %-30s\n" "Analisis de Logs" "Descripción"
-            echo "----------------------------------------------"
-            printf "%-25s | %-30s\n" "Ataque de diccionario" "Descripción"
-            echo "----------------------------------------------"
-            printf "%-25s | %-30s\n" "Fingerprinting" "Descripción"
-            echo "----------------------------------------------"
-            printf "%-25s | %-30s\n" "Footprinting" "Descripción"
-            echo "----------------------------------------------"
-            printf "%-25s | %-30s\n" "Fuzzing" "Descripción"
-            echo "----------------------------------------------"
-            printf "%-25s | %-30s\n" "Ataque con metasploit" "Descripción"
-            echo "----------------------------------------------"
+            echo "Instalando dependecias...."
+            apt update
+            apt-get install john hashid hashcat fping git -y
+            #wget https://github.com/josuamarcelc/common-password-list/blob/ca1abf967b91c9cd2656e4c4d3b8d11109b90ef3/rockyou.txt/rockyou.txt.zip
+            #mv rockyou.txt.zip /usr/share/wordlists/
             ;;
 # -----------------------SALIR-----------------------------------
         "9")
