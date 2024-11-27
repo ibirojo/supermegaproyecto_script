@@ -1,4 +1,9 @@
 #!/bin/bash
+if [ "$EUID" -ne 0 ]
+  then echo "Por favor, ejecuta este script como root."
+  exit
+fi
+
 while true; do
     toilet -S supermegaincreible  script molon de ibai -f pagga -w 75
     echo "==========================================================================" 
@@ -56,6 +61,7 @@ while true; do
 
             echo >> $resultado_log
 
+
             echo "Análisis completado. Informe guardado en $resultado_log"
 
             read -s -p "Presiona cualquier tecla para volver al menu."
@@ -66,16 +72,67 @@ while true; do
             echo "Introduce el hash:"
             read hash
 
-            # Obtener la salida de hashid
-            hashid=$(echo "$hash" | hashid)
-            hash_jtr=$(echo "$hash" | hashid -j )
+            echo $hash > hash.txt
 
-            # Procesar la salida y formatearla en una tabla
-            echo -e "Tipo de Hash\tVersión de JtR"
-            echo "$hashid" | grep "[+]" | awk -F '[+] ' '{print $1}'
+            echo -e "--- Tipos de Hash encontrados ---"
+            while read -r tipo; do
+                tipos+=("$tipo")
+            done < <(hashid $hash | grep "[+]" | awk '{print $2}')
 
+            while read -r tipo; do
+                tipos_j+=("$tipo")
+            done < <(hashid -j $hash | grep "[+]" | awk -F'[][]' '{print $4}' | awk '{print $3}')
+
+            for i in "${!tipos[@]}"; do
+                eval "TIPO_HASH_$((i+1))='${tipos[i]}'"
+                eval "echo $((i+1)). \$TIPO_HASH_$((i+1))"
+            done
+
+            for i in "${!tipos_j[@]}"; do
+                eval "TIPO_HASH_J_$((i+1))='${tipos_j[i]}'"
+            done
+
+            read -p "Con que tipo de Hash quiere probar? (escribe el número): " hash_id
+
+            eval "hash_type=\$TIPO_HASH_J_$hash_id"
+
+            while true; do
+            echo "Elije un diccionario:"
+            echo "1. Diccionario de John The Ripper"
+            echo "2. Rockyou.txt"
+            echo "3. Otro"
+            read dic
+                case $dic in
+                    "1")
+                        diccionario="/usr/share/john/password.lst"
+                        break
+                        ;;
+                    "2")
+                        diccionario="/usr/share/wordlists/rockyou.txt"
+                        break
+                        ;;
+                    "3")
+                        read -p "Escribe la direccion completa del diccionario: " diccionario
+                        break
+                        ;;
+                    *)
+                        echo "Elige 1, 2 o 3"
+                        ;;
+                esac
+            done
+            echo "Comenzando crackeo..."
+
+            john hash.txt --wordlist=/usr/share/wordlists/rockyou/rockyou.txt --format=$hash_type --fork=16 --verbosity=1
+
+            john --show hash.txt --format=$hash_type >> hash.txt 
+
+            echo "---------CONTRASEÑA------------"
+            cat hash.txt | grep "?" | awk -F ':' '{print $2}'
+            echo "-------------------------------"
 
             read -s -p "Presiona cualquier tecla para volver al menu."
+
+            rm hash.txt
             clear
             ;;
 # -----------------------FINGERPRINTING----------------------------------- 
@@ -111,8 +168,7 @@ while true; do
             echo "Nmap terminado, puedes encontrar lo resultados en $target.txt"
             read -s -p "Presiona cualquier tecla para volver al menu."
 
-            #EXTRA----> QUE SE PUEDAN LANZAR SCRIPTS !!!!!!
-            
+            #EXTRA----> QUE SE PUEDAN LANZAR SCRIPTS!!!!!!
             clear
             ;;
 # -----------------------FOOTPRINTING----------------------------------- X
@@ -151,7 +207,7 @@ while true; do
             ;;
 # -----------------------SALIR-----------------------------------
         "9")
-            echo "Salir..."
+            echo "Saliendo..."
             break
             ;;
         *)
