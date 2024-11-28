@@ -181,8 +181,42 @@ while true; do
         ;;
         # -----------------------FOOTPRINTING----------------------------------- X
     "5")
-        echo "Has elegido la Opción 5"
-
+        clear
+        while true; do
+            echo "COMENZANDO EXIFTOOL"
+            echo "1. Metadatos de la ruta actual"
+            echo "2. Metadatos de una ruta especifica"
+            echo "3. Metadatos de un fichero especifico"
+            echo "4. Volver"
+            echo "Elige una opción: "
+            read footprinting
+            case $footprinting in
+            "1")
+                clear
+                exiftool ./
+                read -s -p "Presiona cualquier tecla para volver al menu."
+                ;;
+            "2")
+                clear
+                read -p "Escribe la ruta completa:" ruta_footprinting
+                exiftool $ruta_footprinting
+                read -s -p "Presiona cualquier tecla para volver al menu."
+                ;;
+            "3")
+                clear
+                read -p "Escribe la ruta completa:" fichero_footprinting
+                exiftool $fichero_footprinting
+                read -s -p "Presiona cualquier tecla para volver al menu."
+                ;;
+            "4")
+                clear
+                break
+                ;;
+            *)
+                echo "Elige 1, 2 o 3"
+                ;;
+            esac
+        done
         ;;
         # -----------------------FUZZING----------------------------------- X
     "6")
