@@ -24,7 +24,7 @@ while true; do
     echo "8. Instalar dependecias (apt)"
     echo "9. Salir"
     echo "------------------"
-    echo -e "\033[0;31mAtencion, si no estas trabajando linux instala las dependecias o el script fallará (8)\033[0m"
+    echo -e "\033[0;31mAtencion, si no estas trabajando en Kali Linux o ParrotOS finstala las dependecias o el script fallará (8)\033[0m"
     echo "Elige una opción:"
     read opcion
 
@@ -198,7 +198,7 @@ while true; do
     "8")
         echo "Instalando dependecias...."
         apt update
-        apt-get install john hashid hashcat fping wfuzz exiftool toilet -y
+        apt-get install john hashid hashcat fping wfuzz libimage-exiftool-perl toilet -y
         #wget https://github.com/josuamarcelc/common-password-list/blob/ca1abf967b91c9cd2656e4c4d3b8d11109b90ef3/rockyou.txt/rockyou.txt.zip
         #mv rockyou.txt.zip /usr/share/wordlists/
         ;;
@@ -208,7 +208,10 @@ while true; do
         break
         ;;
     *)
+        clear
         echo "Opción no válida. Por favor, elige una opción del 1 al 6."
+        sleep 1
+        clear
         ;;
     esac
 done
