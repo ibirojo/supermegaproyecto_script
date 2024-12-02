@@ -36,7 +36,7 @@ while true; do
         sleep 3
         clear
         ;;
-        # -----------------------LOGS-----------------------------------  X
+        # -----------------------LOGS-----------------------------------
     "2")
         echo "Comenzando análisis de logs..."
         read -p "Indica el lugar el fichero de logs (direccion completa):" log
@@ -92,6 +92,10 @@ while true; do
             tipos_j+=("$tipo")
         done < <(hashid -j $hash | grep "[+]" | awk -F'[][]' '{print $4}' | awk '{print $3}')
 
+        while read -r tipo; do
+            tipos_m+=("$tipo")
+        done < <(hashid -m $hash | grep "[+]" | awk -F'[][]' '{print $4}' | awk '{print $3}')
+
         for i in "${!tipos[@]}"; do
             eval "TIPO_HASH_$((i + 1))='${tipos[i]}'"
             eval "echo $((i + 1)). \$TIPO_HASH_$((i + 1))"
@@ -101,9 +105,11 @@ while true; do
             eval "TIPO_HASH_J_$((i + 1))='${tipos_j[i]}'"
         done
 
-        read -p "Con que tipo de Hash quiere probar? (escribe el número): " hash_id
+        for i in "${!tipos_m[@]}"; do
+            eval "TIPO_HASH_M_$((i + 1))='${tipos_m[i]}'"
+        done
 
-        eval "hash_type=\$TIPO_HASH_J_$hash_id"
+        read -p "Con que tipo de Hash quiere probar? (escribe el número): " hash_id
 
         while true; do
             echo "Elije un diccionario:"
@@ -129,21 +135,48 @@ while true; do
                 ;;
             esac
         done
-        echo "Comenzando crackeo..."
+        while true; do
+            echo "Elije la herramienta"
+            echo "1. John The Ripper"
+            echo "2. HashCat"
+            read tool
+            case $tool in
+                "1")
+                    echo "Comenzando JohnTheRipper..."
 
-        john hash.txt --wordlist=$diccionario --format=$hash_type --fork=16 --verbosity=1
+                    eval "hash_type=\$TIPO_HASH_J_$hash_id"
 
-        john --show hash.txt --format=$hash_type >>hash.txt
+                    john hash.txt --wordlist=$diccionario --format=$hash_type --fork=16 --verbosity=1
 
-        echo "---------CONTRASEÑA------------"
-        cat hash.txt | grep "?" | awk -F ':' '{print $2}'
-        echo "-------------------------------"
+                    john --show hash.txt --format=$hash_type >>hash.txt
 
-        read -s -p "Presiona cualquier tecla para volver al menu."
+                    echo "---------CONTRASEÑA------------"
+                    cat hash.txt | grep "?" | awk -F ':' '{print $2}'
+                    echo "-------------------------------"
 
-        rm hash.txt
+                    read -s -p "Presiona cualquier tecla para volver al menu."
+                    rm hash.txt
+                    break        
+                    ;;
+                "2")
+                    echo "Comenzando HashCat..."
+
+                    eval "hash_type=\$TIPO_HASH_M_$hash_id"
+
+                    echo "---------CONTRASEÑA------------"
+                    hashcat hash.txt -m $hash_type -w 4 $diccionario --show | awk -F ':' '{print $2}'
+                    echo "-------------------------------"
+                    read -s -p "Presiona cualquier tecla para volver al menu."
+                    rm hash.txt
+                    break
+                    ;;
+
+                *)
+                    echo "Elige 1 o 2"
+                    ;;
+            esac
+        done
         clear
-        # EXTRA ------> LO MISMO CON HASHCAT
         ;;
         # -----------------------FINGERPRINTING-----------------------------------
     "4")
