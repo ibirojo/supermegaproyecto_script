@@ -24,7 +24,7 @@ while true; do
     echo "8. Instalar dependecias (apt)"
     echo "9. Salir"
     echo "------------------"
-    echo -e "\033[0;31mAtencion, si no estas trabajando en Kali Linux o ParrotOS finstala las dependecias o el script fallará (8)\033[0m"
+    echo -e "\033[0;31mAtencion, este script utiliza programas o listas de palabras que pueden no estar instalados por defecto en KaliLinux u otro SO, instala las dependecias. \033[0m"
     echo "Elige una opción:"
     read opcion
 
@@ -143,6 +143,7 @@ while true; do
 
         rm hash.txt
         clear
+        # EXTRA ------> LO MISMO CON HASHCAT
         ;;
         # -----------------------FINGERPRINTING-----------------------------------
     "4")
@@ -216,12 +217,45 @@ while true; do
                 echo "Elige 1, 2 o 3"
                 ;;
             esac
+
+            # EXTRA ----> EDITAR METADATOS!!!
         done
         ;;
         # -----------------------FUZZING----------------------------------- X
     "6")
-        echo "Has elegido la Opción 6"
+        clear
+        echo "FUZZING"
+        read -p "Indica la URL para el Fuzz: " url
+        echo "Que quieres probar?"
+        echo "1. Directorios comunes"
+        echo "2. Directorios en español"
+        echo "3. Directorios de administración"
+        echo "4. Lista bestial (lenta)"
+        echo "5. Lista personalizada"
+        read directorios
+        case $directorios in
+            "1")
+            lista_directorios="/usr/share/wordlists/wfuzz/general/common.txt"
+            ;;
+            "2")
+            lista_directorios="/usr/share/wordlists/wfuzz/general/spanish.txt"
+            ;;
+            "3")
+            lista_directorios="/usr/share/wordlists/wfuzz/general/admin-panels.txt"
+            ;;
+            "4")
+            lista_directorios="/usr/share/wordlists/wfuzz/general/megabeast.txt"
+            ;;
+            "5")
+            read -p "Indica la lista: " lista_directorios
+            ;;
+            *)
+            ;;
+        esac
 
+        wfuzz -f wfuzz.txt -w $lista_directorios $url | awk '$2 ~ /^20[0-9]$/ || $2 ~ /^30[0-9]$/'
+
+        read -s -p "Presiona cualquier tecla para volver al menu."
         ;;
         # -----------------------METASPLOIT----------------------------------- X
     "7")
