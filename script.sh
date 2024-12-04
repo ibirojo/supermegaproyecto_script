@@ -228,9 +228,9 @@ while true; do
 
         echo "Iniciando Nmap contra $target..."
 
-        nmap -sV $target | grep -A 20 "PORT" | grep -B 20 "Service Info:" >$target.txt
+        nmap -sV $target | grep -A 20 "PORT" | grep -B 20 "Service Info:" >$target.target
 
-        echo "Nmap terminado, puedes encontrar lo resultados en $target.txt"
+        echo "Nmap terminado, puedes encontrar lo resultados en $target.target"
         echo "-------------------------"
 
         while true; do
@@ -248,7 +248,7 @@ while true; do
                         if [[ -n "$servicio" ]]; then
                             servicios+=("$servicio")
                         fi
-                    done < <(awk '{print $3}' $target.txt | sed '/^$/d')
+                    done < <(awk '{print $3}' $target.target | sed '/^$/d')
                     
                     # Buscar scripts para cada servicio
                     for i in "${servicios[@]}"; do
@@ -342,6 +342,7 @@ while true; do
             read -p "Indica la lista: " lista_directorios
             ;;
             *)
+
             ;;
         esac
 
@@ -351,7 +352,22 @@ while true; do
         ;;
         # -----------------------METASPLOIT----------------------------------- X
     "7")
+        clear
         echo "Has elegido la Opción 7"
+        read -p "ip" mfs_ip
+        if [[ ! -e $mfs_ip.target ]]; then 
+                echo "Todavia no has hecho fingerprinting contra $mfs_ip. Es recomendable generar un archivo con posibles puertos abiertos."
+                read -p "Deseas continuar? (s/n)" mfs_continuar
+                case $mfs_continuar in
+                "s")
+                    
+                ;;
+                "n")
+
+                ;;
+            esac
+        fi
+        echo "Comenzando Metasploit contra $mfs_ip..."
 
         ;;
         # -----------------------INSTALL DEPENDENCIES----------------------------------- X
