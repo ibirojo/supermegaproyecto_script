@@ -196,7 +196,7 @@ while true; do
         done
 
         for i in "${!ips[@]}"; do
-            eval "echo IP_$((i + 1))=\$IP_$((i + 1))"
+            eval "echo $((i + 1)). \$IP_$((i + 1))"
         done
 
         read -p "Qué ip quieres escanear? (escribe el número): " target_id
@@ -205,7 +205,7 @@ while true; do
 
         echo "Iniciando Nmap contra $target..."
 
-        nmap $target | grep -A 20 "PORT" | grep -B 20 "Service info:" >>$target.txt
+        nmap -sV $target | grep -A 20 "PORT" | grep -B 20 "Service Info:" >$target.txt
 
         echo "Nmap terminado, puedes encontrar lo resultados en $target.txt"
         read -s -p "Presiona cualquier tecla para volver al menu."
