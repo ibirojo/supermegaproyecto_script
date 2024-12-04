@@ -24,7 +24,7 @@ while true; do
     echo "8. Instalar dependecias (apt)"
     echo "9. Salir"
     echo "------------------"
-    echo -e "\033[0;31mAtencion, este script utiliza programas o listas de palabras que pueden no estar instalados por defecto en KaliLinux u otro SO, instala las dependecias. \033[0m"
+    echo -e "\033[0;31mAtencion, este script utiliza programas o listas de palabras que pueden no estar instalados por defecto en KaliLinux u otro SO, instala las dependencias. \033[0m"
     echo "Elige una opción:"
     read opcion
 
@@ -41,7 +41,7 @@ while true; do
         echo "Comenzando análisis de logs..."
 
         regex_log="^/([^/\0]+/)*[^/\0]+\.(txt|log)$"
-        
+
         while true; do
             read -p "Indica el lugar el fichero de logs (direccion completa):" log
             if [[ $log =~ $regex_log ]]; then
@@ -231,9 +231,45 @@ while true; do
         nmap -sV $target | grep -A 20 "PORT" | grep -B 20 "Service Info:" >$target.txt
 
         echo "Nmap terminado, puedes encontrar lo resultados en $target.txt"
-        read -s -p "Presiona cualquier tecla para volver al menu."
+        echo "-------------------------"
 
-        #EXTRA----> QUE SE PUEDAN LANZAR SCRIPTS!!!!!!
+        while true; do
+            echo "Pulsa S si deseas lanzar scripts o pulsa cualquier otra tecla para volver al menú."
+            read -s lanzar_script
+            case $lanzar_script in
+                "s")
+                    echo "En base a los servicios detectados anteriormente puede que estos scripts sean de utilidad:"
+                    
+                    # Inicializar array vacío
+                    servicios=()
+                    
+                    # Leer los servicios desde el archivo, filtrando los vacíos
+                    while read -r servicio; do
+                        if [[ -n "$servicio" ]]; then
+                            servicios+=("$servicio")
+                        fi
+                    done < <(awk '{print $3}' $target.txt | sed '/^$/d')
+                    
+                    # Buscar scripts para cada servicio
+                    for i in "${servicios[@]}"; do
+                        resultados=$(ls /usr/share/nmap/scripts | grep "$i" | tail -n 3)
+                        if [[ -n "$resultados" ]]; then
+                            echo "$resultados"
+                        fi
+                    done
+                    
+                    read -p "Escribe el nombre del script que quieras usar: " seleccion
+                    echo "Lanzando $seleccion contra $target..."
+                    nmap --script=$seleccion $target
+                    ;;
+                *)
+                    echo "Volviendo al menú..."
+                    sleep 1
+                    break
+                    ;;
+            esac
+
+        done
         clear
         ;;
         # -----------------------FOOTPRINTING----------------------------------- X
@@ -322,7 +358,7 @@ while true; do
     "8")
         echo "Instalando dependecias...."
         apt update
-        apt-get install john hashid hashcat fping wfuzz libimage-exiftool-perl toilet -y
+        apt-get install nmap john hashid hashcat fping wfuzz libimage-exiftool-perl toilet -y
         #wget https://github.com/josuamarcelc/common-password-list/blob/ca1abf967b91c9cd2656e4c4d3b8d11109b90ef3/rockyou.txt/rockyou.txt.zip
         #mv rockyou.txt.zip /usr/share/wordlists/
         ;;
@@ -333,7 +369,7 @@ while true; do
         ;;
     *)
         clear
-        echo "Opción no válida. Por favor, elige una opción del 1 al 6."
+        echo "Opción no válida. Por favor, elige una opción del 1 al 9."
         sleep 1
         clear
         ;;
