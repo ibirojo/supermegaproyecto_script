@@ -39,8 +39,22 @@ while true; do
         # -----------------------LOGS-----------------------------------
     "2")
         echo "Comenzando análisis de logs..."
-        read -p "Indica el lugar el fichero de logs (direccion completa):" log
-        echo "Analizando logs..."
+
+        regex_log="^/([^/\0]+/)*[^/\0]+\.(txt|log)$"
+        
+        while true; do
+            read -p "Indica el lugar el fichero de logs (direccion completa):" log
+            if [[ $log =~ $regex_log ]]; then
+                if [[ -e $log ]]; then 
+                    echo "Comenzando analisis de logs..." 
+                    break 
+                else 
+                echo "El archivo $log no existe. Inténtalo de nuevo."
+                fi
+            else
+                echo "Archivo no válido. Escribe la ruta completa de un fichero .txt o .log"
+            fi
+        done
 
         resultado_log=informe_logs.txt
 
@@ -183,9 +197,18 @@ while true; do
         clear
         echo "Comenzando fingerprinting..."
         sleep 1
-        read -p "Introduce la red: " red
 
-        ips=()
+        regex_ip="^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$"
+
+        while true; do
+            read -p "Introduce la red: " red
+            if [[ $red =~ $regex_ip ]]; then
+                echo "Escaneando la red $red..."
+                break
+            else
+                echo "Red no válida. Introduce una red con máscara. E.j 192.168.1.0/24"
+            fi
+        done
 
         while read -r ip; do
             ips+=("$ip")
@@ -194,11 +217,11 @@ while true; do
         for i in "${!ips[@]}"; do
             eval "IP_$((i + 1))=${ips[i]}"
         done
-
+        echo "-----IPs ENCONTRADAS-----"
         for i in "${!ips[@]}"; do
             eval "echo $((i + 1)). \$IP_$((i + 1))"
         done
-
+        echo "-------------------------"
         read -p "Qué ip quieres escanear? (escribe el número): " target_id
 
         eval "target=\$IP_$target_id"
