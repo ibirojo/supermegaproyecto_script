@@ -145,6 +145,7 @@ while true; do
                 break
                 ;;
             *)
+                clear
                 echo -e "${R}Elige 1, 2 o 3${NOCOLOR}"
                 ;;
             esac
@@ -324,16 +325,15 @@ while true; do
         clear
         echo -e "${G}FUZZING${G}"
         echo -e "${B}Indica la URL para el Fuzzing:${NOCOLOR}"
-        read url
-        echo
-        echo -e "${B}Que quieres probar?${NOCOLOR}"
-        echo -e "1. Directorios comunes"
-        echo -e "2. Directorios en español"
-        echo -e "3. Directorios de administración"
-        echo -e "4. Lista bestial (lenta)"
-        echo -e "5. Lista personalizada"
-        read directorios
+        read url              
         while true; do
+            echo -e "${B}Que quieres probar?${NOCOLOR}"
+            echo -e "1. Directorios comunes"
+            echo -e "2. Directorios en español"
+            echo -e "3. Directorios de administración"
+            echo -e "4. Lista bestial (lenta)"
+            echo -e "5. Lista personalizada"
+            read directorios
             case $directorios in
             "1")
                 lista_directorios="/usr/share/wordlists/wfuzz/general/common.txt"
@@ -357,8 +357,7 @@ while true; do
                 ;;
             *)
                 clear
-                echo -e "${R}Elige 1, 2, 3, 4 o 5.${NOCOLOR}" #---------------------------- FIX WHILE 
-                sleep 1
+                echo -e "${R}Elige 1, 2, 3, 4 o 5.${NOCOLOR}" 
                 ;;
             esac
         done
