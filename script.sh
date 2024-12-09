@@ -21,7 +21,7 @@ while true; do
     echo -e "${B}5. Footprinting${NOCOLOR}"
     echo -e "${B}6. Fuzzing${NOCOLOR}"
     echo -e "${B}7. Ataque con metasploit${NOCOLOR}"
-    echo -e "${B}8. Instalar dependecias (apt)${NOCOLOR}"
+    echo -e "${B}8. Instalar dependencias (apt)${NOCOLOR}"
     echo -e "${B}9. Salir${NOCOLOR}"
     echo -e "${B}------------------${NOCOLOR}"
     echo -e "${R}Atencion, este script utiliza programas o listas de palabras que pueden no estar instalados por defecto en KaliLinux u otro SO, instala las dependencias.${NOCOLOR}"
@@ -41,7 +41,7 @@ while true; do
         regex_log="^/([^/\0]+/)*[^/\0]+\.(txt|log)$"
 
         while true; do
-            echo "${B}Indica el lugar el fichero de logs (direccion completa):${NOCOLOR}"
+            echo -e "${B}Indica el lugar el fichero de logs (direccion completa):${NOCOLOR}"
             read log
             if [[ $log =~ $regex_log ]]; then
                 if [[ -e $log ]]; then
@@ -89,7 +89,9 @@ while true; do
         read -s
         clear
         ;;
-    "3")
+
+    "3") 
+        # -----------------------DICCIONARIO-----------------------------------
         echo -e "${B}Introduce el hash:${NOCOLOR}"
         read hash
 
@@ -169,7 +171,7 @@ while true; do
                 cat hash.txt | grep "?" | awk -F ':' '{print $2}'
                 echo -e "${G}-------------------------------${NOCOLOR}"
 
-                echo -e "${B}Presiona cualquier tecla para volver al menu.${NOCOLOR}"
+                echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
                 read -s
                 rm hash.txt
                 break
@@ -182,7 +184,7 @@ while true; do
                 echo -e "${G}---------CONTRASEÑA------------${NOCOLOR}"
                 hashcat hash.txt -m $hash_type -w 4 $diccionario --show | awk -F ':' '{print $2}'
                 echo -e "${G}-------------------------------${NOCOLOR}"
-                echo -e "${B}Presiona cualquier tecla para volver al menu.${NOCOLOR}"
+                echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
                 read -s
                 rm hash
                 break
@@ -206,8 +208,9 @@ while true; do
         done
         clear
         ;;
-        # -----------------------FINGERPRINTING-----------------------------------
+        
     "4")
+        # -----------------------FINGERPRINTING-----------------------------------
         clear
         echo -e "${G}Comenzando fingerprinting...${NOCOLOR}"
         sleep 1
@@ -298,88 +301,89 @@ while true; do
         unset regex_ip red ips target_id target lanzar_script servicios resultados
         clear
         ;;
+        
+    "5")
         # -----------------------FOOTPRINTING-----------------------------------
-"5")
-    clear
-    while true; do
-        echo -e "${G}COMENZANDO EXIFTOOL${NOCOLOR}"
-        echo -e "1. Metadatos de la ruta actual"
-        echo -e "2. Metadatos de una ruta especifica"
-        echo -e "3. Metadatos de un fichero especifico"
-        echo -e "4. Editar metadatos de un fichero especifico"
-        echo -e "5. Volver"
-        echo -e "${B}Elige una opción: ${NOCOLOR}"
-        read footprinting
-        case $footprinting in
-        "1")
-            clear
-            exiftool ./
-            echo -e "${B}Presiona cualquier tecla para volver al menú${NOCOLOR}"
-            read -s
-            ;;
-        "2")
-            clear
-            echo -e "${B}Escribe la ruta completa:${NOCOLOR}"
-            read ruta_footprinting
-            exiftool $ruta_footprinting
-            echo -e "${B}Presiona cualquier tecla para volver al menú${NOCOLOR}"
-            read -s
-            ;;
-        "3")
-            clear
-            echo -e "${B}Escribe la ruta completa:${NOCOLOR}"
-            read ruta_footprinting
-            exiftool $ruta_footprinting
-            echo -e "${B}Presiona cualquier tecla para volver al menú${NOCOLOR}"
-            read -s
-            ;;
-        "4")
-            clear
-            while true; do
-                echo -e "${B}Escribe la ruta completa del fichero:${NOCOLOR}"
-                read fichero_editar
-                if [ -e "$fichero_editar" ]; then 
-                    echo -e "${B}Listando metadatos editables disponibles...${NOCOLOR}"
-                    while read -r t_metadato; do
-                        t_metadatos+=("$t_metadato")
-                    done < <(exiftool "$fichero_editar" | awk -F ":" '{print $1}' | tr -d ' ')
+        clear
+        while true; do
+            echo -e "${G}COMENZANDO EXIFTOOL${NOCOLOR}"
+            echo -e "1. Metadatos de la ruta actual"
+            echo -e "2. Metadatos de una ruta especifica"
+            echo -e "3. Metadatos de un fichero especifico"
+            echo -e "4. Editar metadatos de un fichero especifico"
+            echo -e "5. Volver"
+            echo -e "${B}Elige una opción: ${NOCOLOR}"
+            read footprinting
+            case $footprinting in
+            "1")
+                clear
+                exiftool ./
+                echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
+                read -s
+                ;;
+            "2")
+                clear
+                echo -e "${B}Escribe la ruta completa:${NOCOLOR}"
+                read ruta_footprinting
+                exiftool $ruta_footprinting
+                echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
+                read -s
+                ;;
+            "3")
+                clear
+                echo -e "${B}Escribe la ruta completa:${NOCOLOR}"
+                read ruta_footprinting
+                exiftool $ruta_footprinting
+                echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
+                read -s
+                ;;
+            "4")
+                clear
+                while true; do
+                    echo -e "${B}Escribe la ruta completa del fichero:${NOCOLOR}"
+                    read fichero_editar
+                    if [ -e "$fichero_editar" ]; then 
+                        echo -e "${B}Listando metadatos editables disponibles...${NOCOLOR}"
+                        while read -r t_metadato; do
+                            t_metadatos+=("$t_metadato")
+                        done < <(exiftool "$fichero_editar" | awk -F ":" '{print $1}' | tr -d ' ')
 
-                    for i in "${!t_metadatos[@]}"; do
-                        eval "tipo_metadato_$((i + 1))='${t_metadatos[i]}'"
-                        eval "echo $((i + 1)). \$tipo_metadato_$((i + 1))"
-                    done
-                    echo -e "${B}Escribe el número del metadato a editar (de la lista anterior):${NOCOLOR}"
-                    read n_metadato
-                    eval "metadata_type=\$tipo_metadato_$n_metadato"
-                    echo -e "${B}Escribe el nuevo valor del metadato:${NOCOLOR}"
-                    read valor
-                    
-                    exiftool -"$metadata_type"="$valor" "$fichero_editar"
-                    echo -e "${G}Metadato editado correctamente.${NOCOLOR}"
-                    
-                    break
-                else
-                    echo -e "${R}Error: El fichero no existe.${NOCOLOR}"
-                fi
-            done 
-            echo -e "${B}Presiona cualquier tecla para volver al menú${NOCOLOR}"
-            read -s
-            clear
-            break
-            ;;
-        "5")
-            clear
-            break
-            ;;
-        *)
-            echo -e "${R}Elige una opción válida (1-5)${NOCOLOR}"
-            ;;
-        esac
-    done
-    ;;
+                        for i in "${!t_metadatos[@]}"; do
+                            eval "tipo_metadato_$((i + 1))='${t_metadatos[i]}'"
+                            eval "echo $((i + 1)). \$tipo_metadato_$((i + 1))"
+                        done
+                        echo -e "${B}Escribe el número del metadato a editar (de la lista anterior):${NOCOLOR}"
+                        read n_metadato
+                        eval "metadata_type=\$tipo_metadato_$n_metadato"
+                        echo -e "${B}Escribe el nuevo valor del metadato:${NOCOLOR}"
+                        read valor
+                        
+                        exiftool -"$metadata_type"="$valor" "$fichero_editar"
+                        echo -e "${G}Metadato editado correctamente.${NOCOLOR}"
+                        
+                        break
+                    else
+                        echo -e "${R}Error: El fichero no existe.${NOCOLOR}"
+                    fi
+                done 
+                echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
+                read -s
+                clear
+                break
+                ;;
+            "5")
+                clear
+                break
+                ;;
+            *)
+                echo -e "${R}Elige una opción válida (1-5)${NOCOLOR}"
+                ;;
+            esac
+        done
+        ;;
 
-        # -----------------------FUZZING-----------------------------------    ------------------------- FINISH FUZZING
     "6")
+        # -----------------------FUZZING-----------------------------------    ------------------------- FINISH FUZZING
         clear
         echo -e "${G}FUZZING${G}"
         echo -e "${B}Indica la URL para el Fuzzing:${NOCOLOR}"
@@ -421,11 +425,12 @@ while true; do
         done
         wfuzz -f wfuzz.txt -w $lista_directorios $url | awk '$2 ~ /^20[0-9]$/ || $2 ~ /^30[0-9]$/'
 
-        echo -e "${B}Presiona culaquier tecla para volver al menú${NOCOLOR}"
+        echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
         read -s
         ;;
-        # -----------------------METASPLOIT----------------------------------- ---------------------------- FINISH METASPLOIT
+        
     "7")
+        # -----------------------METASPLOIT----------------------------------- ---------------------------- FINISH METASPLOIT
         clear
         echo -e "Has elegido la Opción 7"
         read -p "ip" mfs_ip
@@ -438,19 +443,20 @@ while true; do
             esac
         fi
         echo -e "Comenzando Metasploit contra $mfs_ip..."
-
         ;;
-        # -----------------------INSTALL DEPENDENCIES----------------------------------- -------------------- FIX DEPENDENCY INSTALLING
+        
     "8")
-        echo -e "${G}Instalando dependecias....${NOCOLOR}"
+        # -----------------------INSTALL DEPENDENCIES----------------------------------- -------------------- FIX DEPENDENCY INSTALLING
+        echo -e "${G}Instalando dependencias....${NOCOLOR}"
         apt update
         apt-get install nmap john hashid hashcat fping wfuzz libimage-exiftool-perl toilet -y
         #wget https://github.com/josuamarcelc/common-password-list/blob/ca1abf967b91c9cd2656e4c4d3b8d11109b90ef3/rockyou.txt/rockyou.txt.zip
         #mv rockyou.txt.zip /usr/share/wordlists/
         echo -e "${G}Listo!${NOCOLOR}"
         ;;
-        # -----------------------SALIR-----------------------------------
+       
     "9")
+         # -----------------------SALIR-----------------------------------
         echo -e "${G}Saliendo...${NOCOLOR}"
         break
         ;;
