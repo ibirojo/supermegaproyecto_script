@@ -432,15 +432,29 @@ while true; do
     "7")
         # -----------------------METASPLOIT----------------------------------- ---------------------------- FINISH METASPLOIT
         clear
-        echo -e "Has elegido la Opción 7"
-        read -p "ip" mfs_ip
+        echo -e "${G}Comenzando Metasploit...${NOCOLOR}"
+        echo -e "${B}Indica la IP del equipo a atacar: ${NOCOLOR}"
+        read mfs_ip
         if [[ ! -e $mfs_ip.target ]]; then
-            echo -e "Todavia no has hecho fingerprinting contra $mfs_ip. Es recomendable generar un archivo con posibles puertos abiertos."
-            read -p "Deseas continuar? (s/n)" mfs_continuar
-            case $mfs_continuar in
-            "s") ;;
-            "n") ;;
-            esac
+            echo -e "${R}Todavia no has hecho fingerprinting contra $mfs_ip. Es recomendable generar un archivo con posibles puertos abiertos.${NOCOLOR}"
+            sleep 2
+        else 
+            regex_port="^[0-9]{1,6}$"
+            while true; do
+            cat $mfs_ip.target
+            echo -e "${B}Que puerto quieres atacar?${NOCOLOR}"
+            read mfs_port
+                if [[ $mfs_port =~ $regex_port ]]; then
+                    break
+                else
+                    echo -e "${R}Puerto no válido.${NOCOLOR}"
+                fi
+            done
+            echo -e "${B}Que servicio quieres atacar?${NOCOLOR}"
+            read msf_service
+            echo -e "${G}Buscando exploits...${NOCOLOR}"
+            msfconsole -q -x "search name:ssh type:exploit; exit"
+            echo -e "${B}Que exploit quieres usar?${NOCOLOR}"
         fi
         echo -e "Comenzando Metasploit contra $mfs_ip..."
         ;;
@@ -450,9 +464,11 @@ while true; do
         echo -e "${G}Instalando dependencias....${NOCOLOR}"
         apt update
         apt-get install nmap john hashid hashcat fping wfuzz libimage-exiftool-perl toilet -y
-        #wget https://github.com/josuamarcelc/common-password-list/blob/ca1abf967b91c9cd2656e4c4d3b8d11109b90ef3/rockyou.txt/rockyou.txt.zip
-        #mv rockyou.txt.zip /usr/share/wordlists/
+        git clone https://github.com/zacheller/rockyou.git
+        tar -xzvf rockyou/rockyou.txt.tar.gz -C "/usr/share/wordlists"
+        rm -rf rockyou
         echo -e "${G}Listo!${NOCOLOR}"
+        sleep 2
         ;;
        
     "9")
