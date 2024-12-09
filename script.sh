@@ -280,6 +280,11 @@ while true; do
             esac
 
         done
+
+        for i in "${!ips[@]}"; do
+            eval "unset IP_$((i + 1))"
+        done
+        unset regex_ip red ips target_id target lanzar_script servicios resultados
         clear
         ;;
         # -----------------------FOOTPRINTING----------------------------------- ----------------------- FINISH FOOTPRINTING
