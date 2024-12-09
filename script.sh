@@ -90,7 +90,7 @@ while true; do
         clear
         ;;
 
-    "3") 
+    "3")
         # -----------------------DICCIONARIO-----------------------------------
         echo -e "${B}Introduce el hash:${NOCOLOR}"
         read hash
@@ -208,7 +208,7 @@ while true; do
         done
         clear
         ;;
-        
+
     "4")
         # -----------------------FINGERPRINTING-----------------------------------
         clear
@@ -284,7 +284,7 @@ while true; do
                     else
                         echo -e "${R}Error: El script $seleccion no existe.${NOCOLOR}"
                     fi
-                done 
+                done
                 ;;
             *)
                 echo -e "${G}Volviendo al menú...${NOCOLOR}"
@@ -301,7 +301,7 @@ while true; do
         unset regex_ip red ips target_id target lanzar_script servicios resultados
         clear
         ;;
-        
+
     "5")
         # -----------------------FOOTPRINTING-----------------------------------
         clear
@@ -342,7 +342,7 @@ while true; do
                 while true; do
                     echo -e "${B}Escribe la ruta completa del fichero:${NOCOLOR}"
                     read fichero_editar
-                    if [ -e "$fichero_editar" ]; then 
+                    if [ -e "$fichero_editar" ]; then
                         echo -e "${B}Listando metadatos editables disponibles...${NOCOLOR}"
                         while read -r t_metadato; do
                             t_metadatos+=("$t_metadato")
@@ -357,15 +357,15 @@ while true; do
                         eval "metadata_type=\$tipo_metadato_$n_metadato"
                         echo -e "${B}Escribe el nuevo valor del metadato:${NOCOLOR}"
                         read valor
-                        
+
                         exiftool -"$metadata_type"="$valor" "$fichero_editar"
                         echo -e "${G}Metadato editado correctamente.${NOCOLOR}"
-                        
+
                         break
                     else
                         echo -e "${R}Error: El fichero no existe.${NOCOLOR}"
                     fi
-                done 
+                done
                 echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
                 read -s
                 clear
@@ -383,11 +383,11 @@ while true; do
         ;;
 
     "6")
-        # -----------------------FUZZING-----------------------------------    ------------------------- FINISH FUZZING
+        # -----------------------FUZZING-----------------------------------
         clear
         echo -e "${G}FUZZING${G}"
         echo -e "${B}Indica la URL para el Fuzzing:${NOCOLOR}"
-        read url              
+        read url
         while true; do
             echo -e "${B}Que quieres probar?${NOCOLOR}"
             echo -e "1. Directorios comunes"
@@ -419,7 +419,7 @@ while true; do
                 ;;
             *)
                 clear
-                echo -e "${R}Elige 1, 2, 3, 4 o 5.${NOCOLOR}" 
+                echo -e "${R}Elige 1, 2, 3, 4 o 5.${NOCOLOR}"
                 ;;
             esac
         done
@@ -428,7 +428,7 @@ while true; do
         echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
         read -s
         ;;
-        
+
     "7")
         # -----------------------METASPLOIT----------------------------------- ---------------------------- FINISH METASPLOIT
         clear
@@ -438,12 +438,12 @@ while true; do
         if [[ ! -e $mfs_ip.target ]]; then
             echo -e "${R}Todavia no has hecho fingerprinting contra $mfs_ip. Es recomendable generar un archivo con posibles puertos abiertos.${NOCOLOR}"
             sleep 2
-        else 
+        else
             regex_port="^[0-9]{1,6}$"
             while true; do
-            cat $mfs_ip.target
-            echo -e "${B}Que puerto quieres atacar?${NOCOLOR}"
-            read mfs_port
+                cat $mfs_ip.target
+                echo -e "${B}Que puerto quieres atacar?${NOCOLOR}"
+                read mfs_port
                 if [[ $mfs_port =~ $regex_port ]]; then
                     break
                 else
@@ -458,9 +458,9 @@ while true; do
         fi
         echo -e "Comenzando Metasploit contra $mfs_ip..."
         ;;
-        
+
     "8")
-        # -----------------------INSTALL DEPENDENCIES----------------------------------- -------------------- FIX DEPENDENCY INSTALLING
+        # -----------------------INSTALL DEPENDENCIES-----------------------------------
         echo -e "${G}Instalando dependencias....${NOCOLOR}"
         apt update
         apt-get install nmap john hashid hashcat fping wfuzz libimage-exiftool-perl toilet -y
@@ -470,9 +470,9 @@ while true; do
         echo -e "${G}Listo!${NOCOLOR}"
         sleep 2
         ;;
-       
+
     "9")
-         # -----------------------SALIR-----------------------------------
+        # -----------------------SALIR-----------------------------------
         echo -e "${G}Saliendo...${NOCOLOR}"
         break
         ;;
