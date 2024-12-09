@@ -193,6 +193,17 @@ while true; do
                 ;;
             esac
         done
+        for i in "${!tipos[@]}"; do
+            eval "unset TIPO_HASH_$((i + 1))"
+        done
+
+        for i in "${!tipos_j[@]}"; do
+            eval "unset TIPO_HASH_J_$((i + 1))"
+        done
+
+        for i in "${!tipos_m[@]}"; do
+            eval "unset TIPO_HASH_M_$((i + 1))"
+        done
         clear
         ;;
         # -----------------------FINGERPRINTING-----------------------------------
