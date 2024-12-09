@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$EUID" -ne 0 ]; then
-    echo -e "\033[0;31mPor favor, ejecuta este script como root.\033[0m"
+    echo -e "${R}Por favor, ejecuta este script como root.${NOCOLOR}"
     exit
 fi
 
@@ -239,7 +239,7 @@ while true; do
         echo -e "-------------------------"
 
         while true; do
-            echo -e "${B}Pulsa S si deseas lanzar scripts o pulsa cualquier otra tecla para volver al menú.${NOCOLOR}"
+            echo -e "${B}Deseas lanzar un script contra $target? (s/n)${NOCOLOR}"
             read -s lanzar_script
             case $lanzar_script in
             "s")
@@ -259,10 +259,18 @@ while true; do
                         echo "$resultados"
                     fi
                 done
+                while true; do
+                    echo -e "${G}Escribe el nombre del script que quieras usar:${NOCOLOR} "
+                    read seleccion
 
-                read -p "${G}Escribe el nombre del script que quieras usar:${NOCOLOR} " seleccion
-                echo -e "Lanzando $seleccion contra $target..."
-                nmap --script=$seleccion $target
+                    if [ -e "/usr/share/nmap/scripts/$seleccion.nse" ]; then
+                        echo -e "${G}Lanzando $seleccion contra $target...${NOCOLOR}"
+                        nmap --script=$seleccion $target
+                        break
+                    else
+                        echo -e "${R}Error: El script $seleccion no existe.${NOCOLOR}"
+                    fi
+                done 
                 ;;
             *)
                 echo -e "${G}Volviendo al menú...${NOCOLOR}"
