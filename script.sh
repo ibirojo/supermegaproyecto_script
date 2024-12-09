@@ -298,52 +298,86 @@ while true; do
         unset regex_ip red ips target_id target lanzar_script servicios resultados
         clear
         ;;
-        # -----------------------FOOTPRINTING----------------------------------- ----------------------- FINISH FOOTPRINTING
-    "5")
-        clear
-        while true; do
-            echo -e "${G}COMENZANDO EXIFTOOL${NOCOLOR}"
-            echo -e "1. Metadatos de la ruta actual"
-            echo -e "2. Metadatos de una ruta especifica"
-            echo -e "3. Metadatos de un fichero especifico"
-            echo -e "4. Volver"
-            echo -e "${B}Elige una opción: ${NOCOLOR}"
-            read footprinting
-            case $footprinting in
-            "1")
-                clear
-                exiftool ./
-                echo -e "${B}Presiona culaquier tecla para volver al menú${NOCOLOR}"
-                read -s
-                ;;
-            "2")
-                clear
-                echo -e "${B}Escribe la ruta completa:${NOCOLOR}"
-                read ruta_footprinting
-                exiftool $ruta_footprinting
-                echo -e "${B}Presiona culaquier tecla para volver al menú${NOCOLOR}"
-                read -s
-                ;;
-            "3")
-                clear
-                echo -e "${B}Escribe la ruta completa:${NOCOLOR}"
-                read ruta_footprinting
-                exiftool $fichero_footprinting
-                echo -e "${B}Presiona culaquier tecla para volver al menú${NOCOLOR}"
-                read -s
-                ;;
-            "4")
-                clear
-                break
-                ;;
-            *)
-                echo -e "${R}Elige 1, 2 o 3${NOCOLOR}"
-                ;;
-            esac
+        # -----------------------FOOTPRINTING-----------------------------------
+"5")
+    clear
+    while true; do
+        echo -e "${G}COMENZANDO EXIFTOOL${NOCOLOR}"
+        echo -e "1. Metadatos de la ruta actual"
+        echo -e "2. Metadatos de una ruta especifica"
+        echo -e "3. Metadatos de un fichero especifico"
+        echo -e "4. Editar metadatos de un fichero especifico"
+        echo -e "5. Volver"
+        echo -e "${B}Elige una opción: ${NOCOLOR}"
+        read footprinting
+        case $footprinting in
+        "1")
+            clear
+            exiftool ./
+            echo -e "${B}Presiona cualquier tecla para volver al menú${NOCOLOR}"
+            read -s
+            ;;
+        "2")
+            clear
+            echo -e "${B}Escribe la ruta completa:${NOCOLOR}"
+            read ruta_footprinting
+            exiftool $ruta_footprinting
+            echo -e "${B}Presiona cualquier tecla para volver al menú${NOCOLOR}"
+            read -s
+            ;;
+        "3")
+            clear
+            echo -e "${B}Escribe la ruta completa:${NOCOLOR}"
+            read ruta_footprinting
+            exiftool $ruta_footprinting
+            echo -e "${B}Presiona cualquier tecla para volver al menú${NOCOLOR}"
+            read -s
+            ;;
+        "4")
+            clear
+            while true; do
+                echo -e "${B}Escribe la ruta completa del fichero:${NOCOLOR}"
+                read fichero_editar
+                if [ -e "$fichero_editar" ]; then 
+                    echo -e "${B}Listando metadatos editables disponibles...${NOCOLOR}"
+                    while read -r t_metadato; do
+                        t_metadatos+=("$t_metadato")
+                    done < <(exiftool "$fichero_editar" | awk -F ":" '{print $1}' | tr -d ' ')
 
-            # EXTRA ----> EDITAR METADATOS!!!
-        done
-        ;;
+                    for i in "${!t_metadatos[@]}"; do
+                        eval "tipo_metadato_$((i + 1))='${t_metadatos[i]}'"
+                        eval "echo $((i + 1)). \$tipo_metadato_$((i + 1))"
+                    done
+                    echo -e "${B}Escribe el número del metadato a editar (de la lista anterior):${NOCOLOR}"
+                    read n_metadato
+                    eval "metadata_type=\$tipo_metadato_$n_metadato"
+                    echo -e "${B}Escribe el nuevo valor del metadato:${NOCOLOR}"
+                    read valor
+                    
+                    exiftool -"$metadata_type"="$valor" "$fichero_editar"
+                    echo -e "${G}Metadato editado correctamente.${NOCOLOR}"
+                    
+                    break
+                else
+                    echo -e "${R}Error: El fichero no existe.${NOCOLOR}"
+                fi
+            done 
+            echo -e "${B}Presiona cualquier tecla para volver al menú${NOCOLOR}"
+            read -s
+            clear
+            break
+            ;;
+        "5")
+            clear
+            break
+            ;;
+        *)
+            echo -e "${R}Elige una opción válida (1-5)${NOCOLOR}"
+            ;;
+        esac
+    done
+    ;;
+
         # -----------------------FUZZING-----------------------------------    ------------------------- FINISH FUZZING
     "6")
         clear
