@@ -467,6 +467,7 @@ while true; do
         git clone https://github.com/zacheller/rockyou.git
         tar -xzvf rockyou/rockyou.txt.tar.gz -C "/usr/share/wordlists"
         rm -rf rockyou
+        curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
         echo -e "${G}Listo!${NOCOLOR}"
         sleep 2
         ;;
